@@ -1,7 +1,10 @@
 #include "../inc/game.hpp"
+#include "../inc/block.hpp"
 
 GameState::GameState(){
+    init_rng();
     this->board = std::vector<int16_t>(COL_COUNT);
+    this->curr_block = Block::empty_block();
 }
 
 void GameState::display(){
@@ -24,6 +27,16 @@ void GameState::display(){
 }
 
 bool GameState::update(){
+    if (!this->curr_block.is_empty){
+        for (int i = this->curr_block.coords.size() - 1; i >= 0; i--){
+            // check if there is space for the block to fall, and mark the block as empty if not
+            if (curr_block.coords[i].first >= COL_COUNT || (curr_block.coords[i].second & this->board[this->curr_block.coords[i].first + 1])){
+                this->curr_block = Block::empty_block();
+                break;
+            }
+            curr_block.coords[i].first += 1;
+        }
+    }
     bool updated {false};
     for(int col = (COL_COUNT - 1); col >= 0; col--){
         int16_t row = this->board[col];
@@ -48,4 +61,12 @@ bool GameState::update(){
         }
     }
     return updated;
+}
+
+// adds a random, player controlled block to the board
+void GameState::add_random_block(){
+    this->curr_block = Block();
+    this->curr_block.randomize_col(); // DELETE THIS
+    for (const std::pair<int, int16_t>& coord : this->curr_block.coords)
+        this->board[coord.first] ^= coord.second;
 }
