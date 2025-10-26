@@ -25,6 +25,7 @@ struct Block{
     std::vector<std::pair<size_t, int16_t>> coords;
     int type;
     int width;
+    int height;
     bool is_empty {false};
     void randomize_col();
 };

@@ -2,7 +2,7 @@
 #define GAME_H
 
 #define ROW_SIZE 10
-#define COL_COUNT 20
+#define ROW_COUNT 22
 
 #include <iostream> 
 #include <vector>
@@ -19,6 +19,7 @@ class GameState{
         void display();
         void set_row(size_t row, int16_t val) {this->board[row] = val;}
         bool update();
+        bool check_game_over() {return this->board[0] != 0;}
         void add_random_block();
 
 };
