@@ -39,11 +39,11 @@ bool GameState::update(){
     if (!this->curr_block.is_empty){
         for (int i = this->curr_block.coords.size() - 1; i >= 0; i--){
             // check if there is space for the block to fall, and mark the block as empty if not
-            if (curr_block.coords[i].first >= ROW_COUNT){
+            if (curr_block[i].first >= ROW_COUNT){
                 this->curr_block = Block::empty_block();
                 break;
             }
-            curr_block.coords[i].first += 1;
+            curr_block[i].first += 1;
         }
     }
     bool updated {false};
@@ -95,25 +95,25 @@ void GameState::await_move(){
             for (int i = 0; i < this->curr_block.coords.size(); i++){
                 // TODO: Add movement validation
                 // remove the current block position from the board
-                this->board[this->curr_block.coords[i].first] ^= this->curr_block.coords[i].second;
+                this->board[this->curr_block[i].first] ^= this->curr_block[i].second;
                 // update the block's position
-                this->curr_block.coords[i].second <<= 1;
-                this->board[this->curr_block.coords[i].first] |= this->curr_block.coords[i].second;
+                this->curr_block[i].second <<= 1;
+                this->board[this->curr_block[i].first] |= this->curr_block[i].second;
             }
             break;
         case KEY_RIGHT:
             for (int i = 0; i < this->curr_block.coords.size(); i++){
                 // TODO: Add movement validation
                 // remove the current block position from the board
-                this->board[this->curr_block.coords[i].first] ^= this->curr_block.coords[i].second;
+                this->board[this->curr_block[i].first] ^= this->curr_block[i].second;
                 // update the block's position
-                this->curr_block.coords[i].second >>= 1;
-                this->board[this->curr_block.coords[i].first] |= this->curr_block.coords[i].second;
+                this->curr_block[i].second >>= 1;
+                this->board[this->curr_block[i].first] |= this->curr_block[i].second;
             }
             break;
     }
     clear();
     this->display();
-    printw("\n%d", this->curr_block.coords[0].second << 1);
+    printw("\n%d", this->curr_block[0].second << 1);
     refresh();
 }

@@ -64,6 +64,10 @@ Block Block::empty_block(){
     return block;
 }
 
+std::pair<size_t, int16_t>& Block::operator[](size_t row){
+    return this->coords[row];
+}
+
 // THIS FUNCTION IS FOR TESTING, AND WILL BE REMOVED!
 void Block::randomize_col(){
     int offset = rand() % 9;
