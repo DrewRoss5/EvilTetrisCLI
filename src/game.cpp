@@ -1,4 +1,5 @@
 #include <ncurses.h>
+#include <cmath>
 
 #include "../inc/game.hpp"
 #include "../inc/block.hpp"
@@ -37,34 +38,43 @@ void GameState::display() {
 
 bool GameState::update(){
     if (!this->curr_block.is_empty){
-        for (int i = this->curr_block.coords.size() - 1; i >= 0; i--){
-            // check if there is space for the block to fall, and mark the block as empty if not
-            if (curr_block[i].first >= ROW_COUNT){
-                this->curr_block = Block::empty_block();
-                break;
-            }
-            curr_block[i].first += 1;
+        
+        // if there's something under the bottom of the block, make it stop falling
+        int16_t block_bottom = this->curr_block[curr_block.bottom_index].second;
+        size_t bottom_index = this->curr_block[curr_block.bottom_index].first;
+        if (bottom_index + 1 == ROW_COUNT || (this->board[bottom_index + 1] & block_bottom))
+            this->curr_block = Block::empty_block();
+        else{
+            for (int i = this->curr_block.coords.size() - 1; i >= 0; i--)
+                curr_block[i].first += 1;
         }
     }
     bool updated {false};
-    for(int col = (ROW_COUNT - 2); col >= 0; col--){
-        int16_t row = this->board[col];
+    for(int row_no = (ROW_COUNT - 2); row_no >= 0; row_no--){
+        int16_t row = this->board[row_no];
         for (int i = 0; i < ROW_SIZE; i++){
             // if the line is full, clear it
             if (row == 1023){
-                this->board[col] = 0;
+                this->board[row_no] = 0;
                 this->score += 100;
                 updated = true;
-                break;
+                // check if the current block was in the line built
+                if (this->curr_block[this->curr_block.bottom_index].first == row_no){
+                    this->curr_block[this->curr_block.bottom_index].second = 0;
+                    this->curr_block.bottom_index--;
+                    this->curr_block.height--;
+                    if (this->curr_block.height == 0)
+                        this->curr_block = Block::empty_block();
+                }
             }
             // drop any falling lines
             int mask = 0b1000000000;
             for (int i = 0; i < ROW_SIZE; i++){
-                if ((col != (ROW_COUNT - 1)) && (row & mask) && !(this->board[col + 1] & mask)){
+                if ((row_no != (ROW_COUNT - 1)) && (row & mask) && !(this->board[row_no + 1] & mask)){
                     // move the block to the row below   
-                    this->board[col + 1] |= mask;
+                    this->board[row_no + 1] |= mask;
                     // delete the block from this row, keeping others intact
-                    this->board[col] ^= mask;
+                    this->board[row_no] ^= mask;
                     updated = true;
                 }
                 mask >>= 1;
@@ -88,32 +98,43 @@ void GameState::add_random_block(){
 
 // awaits a player movement, and moves the block accordingly once one is found
 void GameState::await_move(){
+    std::vector<std::pair<size_t, int16_t>> new_coords;
     int input;
     input = getch();
+    std::vector<int16_t> new_board;
+    Block new_block = this->curr_block;
     switch (input){
         case KEY_LEFT:
+            new_board = this->board;
+            new_block = curr_block;
             for (int i = 0; i < this->curr_block.coords.size(); i++){
-                // TODO: Add movement validation
+                // ensure the block has enough room to move left
+                if ((new_block[i].second << 1) > 1023)
+                    return;
                 // remove the current block position from the board
-                this->board[this->curr_block[i].first] ^= this->curr_block[i].second;
+                new_board[new_block[i].first] ^= new_block[i].second;
                 // update the block's position
-                this->curr_block[i].second <<= 1;
-                this->board[this->curr_block[i].first] |= this->curr_block[i].second;
+                new_block[i].second <<= 1;
+                new_board[new_block[i].first] |= new_block[i].second;
             }
+            this->curr_block = new_block;
+            this->board = new_board;
             break;
         case KEY_RIGHT:
+             new_board = this->board;
+            new_block = curr_block;
             for (int i = 0; i < this->curr_block.coords.size(); i++){
-                // TODO: Add movement validation
+                // ensure the block has enough room to move left
+                if ((new_block[i].second >> 1) < (pow(2, new_block.width - 1)))
+                    return;
                 // remove the current block position from the board
-                this->board[this->curr_block[i].first] ^= this->curr_block[i].second;
+                new_board[new_block[i].first] ^= new_block[i].second;
                 // update the block's position
-                this->curr_block[i].second >>= 1;
-                this->board[this->curr_block[i].first] |= this->curr_block[i].second;
+                new_block[i].second >>= 1;
+                new_board[new_block[i].first] |= new_block[i].second;
             }
-            break;
+            this->curr_block = new_block;
+            this->board = new_board;
     }
     clear();
-    this->display();
-    printw("\n%d", this->curr_block[0].second << 1);
-    refresh();
 }

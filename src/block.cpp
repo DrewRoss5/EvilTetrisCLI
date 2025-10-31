@@ -16,45 +16,36 @@ void init_rng(){
 // constructs a new random block
 Block::Block(){
     // randomly generate a block type
-    this->type = rand() % (BLOCK_T + 1);
+    this->type = rand() % (BLOCK_T) + 1;
     // create the coordinates for the appropriate block type
     switch (this->type){
-        case BLOCK_O:
-            this->coords = {{0, BOARD_CENTER_LEFT | BOARD_CENTER_RIGHT}, {1, BOARD_CENTER_LEFT | BOARD_CENTER_RIGHT}};
-            this->width = 2;
-            this->height = 2;
-            break;
         case BLOCK_I:
             this->coords = {{0, BOARD_CENTER_LEFT}, {1, BOARD_CENTER_LEFT}, {2, BOARD_CENTER_LEFT}, {3, BOARD_CENTER_LEFT}};
             this->width = 1;
-            this->height = 4;
             break;
         case BLOCK_S:
             this->coords = {{0, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}, {1, BOARD_CENTER_RIGHT | (BOARD_CENTER_RIGHT << 1)}};
             this->width = 2;
-            this->height = 3;
             break;
         case BLOCK_Z:
             this->coords = {{0, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}, {1, BOARD_CENTER_LEFT | (BOARD_CENTER_LEFT >> 1)}};
             this->width = 2;
-            this->height = 3;
             break;
         case BLOCK_L:
             this->coords = {{0, BOARD_CENTER_LEFT}, {1, BOARD_CENTER_LEFT}, {2, BOARD_CENTER_LEFT | BOARD_CENTER_RIGHT}};
             this->width = 2;
-            this->height = 3;
             break;
         case BLOCK_J:
             this->coords = {{0, BOARD_CENTER_RIGHT}, {1, BOARD_CENTER_RIGHT}, {2, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}};
             this->width = 2;
-            this->height = 3;
             break;
         case BLOCK_T:
             this->coords = {{0, BOARD_CENTER_LEFT}, {1, (BOARD_CENTER_LEFT << 1) | BOARD_CENTER_LEFT | BOARD_CENTER_RIGHT}};
             this->width = 3;
-            this->height = 2;
             break;
     }
+    this->height = this->coords.size();
+    this->bottom_index = this->height - 1;
 }
 
 Block Block::empty_block(){

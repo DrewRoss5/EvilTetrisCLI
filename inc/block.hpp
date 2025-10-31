@@ -23,12 +23,14 @@ struct Block{
     Block();
     static Block empty_block();
     std::vector<std::pair<size_t, int16_t>> coords;
+    std::pair<size_t, int16_t>& operator[](size_t row);
     int type;
     int width;
     int height;
+    size_t bottom_index;
     bool is_empty {false};
     void randomize_col();
-    std::pair<size_t, int16_t>& operator[](size_t row);
+   
 };
 
 void init_rng();
