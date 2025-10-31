@@ -108,11 +108,11 @@ void GameState::await_move(){
             new_board = this->board;
             new_block = curr_block;
             for (int i = 0; i < this->curr_block.coords.size(); i++){
-                // ensure the block has enough room to move left
-                if ((new_block[i].second << 1) > 1023)
-                    return;
                 // remove the current block position from the board
                 new_board[new_block[i].first] ^= new_block[i].second;
+                // ensure the block has enough room to move left
+                if ((new_block[i].second << 1) > 1023 || (new_board[new_block[i].first] & (new_block[i].second << 1)))
+                    return;
                 // update the block's position
                 new_block[i].second <<= 1;
                 new_board[new_block[i].first] |= new_block[i].second;
@@ -124,11 +124,11 @@ void GameState::await_move(){
              new_board = this->board;
             new_block = curr_block;
             for (int i = 0; i < this->curr_block.coords.size(); i++){
-                // ensure the block has enough room to move left
-                if ((new_block[i].second >> 1) < (pow(2, new_block.width - 1)))
-                    return;
                 // remove the current block position from the board
                 new_board[new_block[i].first] ^= new_block[i].second;
+                // ensure the block has enough room to move left
+                if ((new_block[i].second >> 1) < (pow(2, new_block.width - 1)) || (new_board[new_block[i].first] & (new_block[i].second >> 1)))
+                    return;
                 // update the block's position
                 new_block[i].second >>= 1;
                 new_board[new_block[i].first] |= new_block[i].second;
