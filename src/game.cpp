@@ -89,8 +89,8 @@ void GameState::add_random_block(){
     }
 }
 
-// awaits a player movement, and moves the block accordingly once one is found
-void GameState::await_move(){
+// checks if a key is currently pressed, and moves the current block accordingly if it is 
+void GameState::check_move(){
     std::vector<std::pair<size_t, int16_t>> new_coords;
     int input;
     input = getch();
@@ -120,7 +120,7 @@ void GameState::await_move(){
                 // remove the current block position from the board
                 new_board[new_block[i].first] ^= new_block[i].second;
                 // ensure the block has enough room to move left
-                if ((new_block[i].second >> 1) < (pow(2, new_block.width - 1)) || (new_board[new_block[i].first] & (new_block[i].second >> 1)))
+                if ((new_block[i].second >> 1) < (pow(2, new_block.width - new_block.direction)) || (new_board[new_block[i].first] & (new_block[i].second >> 1)))
                     return;
                 // update the block's position
                 new_block[i].second >>= 1;
@@ -130,4 +130,5 @@ void GameState::await_move(){
             this->board = new_board;
     }
     clear();
+    flushinp(); 
 }

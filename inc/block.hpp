@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 enum BlockDirection{
-    LEFT = 0,
-    RIGHT
+    RIGHT = 1,
+    LEFT
 };
 
 enum BlockType{
@@ -28,6 +28,7 @@ struct Block{
     int width;
     int height;
     size_t bottom_index;
+    size_t direction {RIGHT};
     bool is_empty {false};
     void randomize_col();
    

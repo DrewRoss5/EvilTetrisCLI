@@ -24,12 +24,13 @@ Block::Block(){
             this->width = 1;
             break;
         case BLOCK_S:
-            this->coords = {{0, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}, {1, BOARD_CENTER_RIGHT | (BOARD_CENTER_RIGHT << 1)}};
+            this->coords = {{0, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}, {1, BOARD_CENTER_RIGHT | (BOARD_CENTER_RIGHT >> 1)}};
             this->width = 2;
             break;
         case BLOCK_Z:
-            this->coords = {{0, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}, {1, BOARD_CENTER_LEFT | (BOARD_CENTER_LEFT >> 1)}};
+            this->coords = {{0, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}, {1, BOARD_CENTER_LEFT | (BOARD_CENTER_LEFT << 1)}};
             this->width = 2;
+            this->direction = LEFT;
             break;
         case BLOCK_L:
             this->coords = {{0, BOARD_CENTER_LEFT}, {1, BOARD_CENTER_LEFT}, {2, BOARD_CENTER_LEFT | BOARD_CENTER_RIGHT}};
@@ -38,10 +39,12 @@ Block::Block(){
         case BLOCK_J:
             this->coords = {{0, BOARD_CENTER_RIGHT}, {1, BOARD_CENTER_RIGHT}, {2, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}};
             this->width = 2;
+             this->direction = LEFT;
             break;
         case BLOCK_T:
             this->coords = {{0, BOARD_CENTER_LEFT}, {1, (BOARD_CENTER_LEFT << 1) | BOARD_CENTER_LEFT | BOARD_CENTER_RIGHT}};
             this->width = 3;
+            this->direction = LEFT;
             break;
     }
     this->height = this->coords.size();

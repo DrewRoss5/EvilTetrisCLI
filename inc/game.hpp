@@ -23,7 +23,7 @@ class GameState{
         bool update();
         bool check_game_over() {return this->board[0] != 0;}
         void add_random_block();
-        void await_move();
+        void check_move();
 
 };
 
