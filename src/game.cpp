@@ -38,7 +38,6 @@ void GameState::display() {
 
 bool GameState::update(){
     if (!this->curr_block.is_empty){
-        
         // if there's something under the bottom of the block, make it stop falling
         int16_t block_bottom = this->curr_block[curr_block.bottom_index].second;
         size_t bottom_index = this->curr_block[curr_block.bottom_index].first;
@@ -50,36 +49,30 @@ bool GameState::update(){
         }
     }
     bool updated {false};
-    for(int row_no = (ROW_COUNT - 2); row_no >= 0; row_no--){
+    for(int row_no = (ROW_COUNT - 1); row_no >= 0; row_no--){
         int16_t row = this->board[row_no];
-        for (int i = 0; i < ROW_SIZE; i++){
-            // if the line is full, clear it
-            if (row == 1023){
-                this->board[row_no] = 0;
-                this->score += 100;
-                updated = true;
-                // check if the current block was in the line built
-                if (this->curr_block[this->curr_block.bottom_index].first == row_no){
-                    this->curr_block[this->curr_block.bottom_index].second = 0;
-                    this->curr_block.bottom_index--;
-                    this->curr_block.height--;
-                    if (this->curr_block.height == 0)
-                        this->curr_block = Block::empty_block();
-                }
-            }
-            // drop any falling lines
-            int mask = 0b1000000000;
-            for (int i = 0; i < ROW_SIZE; i++){
-                if ((row_no != (ROW_COUNT - 1)) && (row & mask) && !(this->board[row_no + 1] & mask)){
-                    // move the block to the row below   
-                    this->board[row_no + 1] |= mask;
-                    // delete the block from this row, keeping others intact
-                    this->board[row_no] ^= mask;
-                    updated = true;
-                }
-                mask >>= 1;
+        // if the line is full, clear it
+        if (row == 1023){
+            this->board[row_no] = 0;
+            this->score += 100;
+            updated = true;
+            // check if the current block was in the line built
+            if (this->curr_block[this->curr_block.bottom_index].first == row_no){
+                this->curr_block[this->curr_block.bottom_index].second = 0;
+                this->curr_block.bottom_index--;
+                this->curr_block.height--;
+                if (this->curr_block.height == 0)
+                    this->curr_block = Block::empty_block();
             }
         }
+        if (row_no != (ROW_COUNT - 1)){
+            int16_t below = this->board[row_no + 1];
+            int16_t falling = this->board[row_no] & ~below;
+            this->board[row_no + 1] |= falling;
+            this->board[row_no] &= ~falling;
+        }
+        if (board[row_no] != row)
+            updated = true;
     }
     return updated;
 }

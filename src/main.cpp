@@ -26,10 +26,12 @@ int main(){
             game.add_random_block();
         
         // check if the blocks have gone over the top
+        /*
         if (game.check_game_over()){
             endwin();
             std::cout << "GAME OVER!" << std::endl;
             break;
         }
+        */
     }
 }
