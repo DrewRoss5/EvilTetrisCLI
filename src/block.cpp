@@ -24,12 +24,13 @@ Block::Block(){
             this->width = 1;
             break;
         case BLOCK_S:
-            this->coords = {{0, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}, {1, BOARD_CENTER_RIGHT | (BOARD_CENTER_RIGHT >> 1)}};
-            this->width = 2;
+            this->coords = {{0, BOARD_CENTER_RIGHT | (BOARD_CENTER_RIGHT >> 1)}, {1, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}};
+            this->width = 3;
+            this->direction = LEFT;
             break;
         case BLOCK_Z:
-            this->coords = {{0, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}, {1, BOARD_CENTER_LEFT | (BOARD_CENTER_LEFT << 1)}};
-            this->width = 2;
+            this->coords = {{0, BOARD_CENTER_LEFT| BOARD_CENTER_LEFT << 1}, {1, BOARD_CENTER_RIGHT | BOARD_CENTER_LEFT}};
+            this->width = 3;
             this->direction = LEFT;
             break;
         case BLOCK_L:
