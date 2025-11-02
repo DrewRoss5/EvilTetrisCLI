@@ -37,6 +37,7 @@ void GameState::display() {
 }
 
 bool GameState::update(){
+    bool block_falling {false};
     if (!this->curr_block.is_empty){
         // if there's something under the bottom of the block, make it stop falling
         int16_t block_bottom = this->curr_block[curr_block.bottom_index].second;
@@ -46,13 +47,14 @@ bool GameState::update(){
         else{
             for (int i = this->curr_block.coords.size() - 1; i >= 0; i--)
                 curr_block[i].first += 1;
+            block_falling = true;
         }
     }
     bool updated {false};
     for(int row_no = (ROW_COUNT - 1); row_no >= 0; row_no--){
         int16_t row = this->board[row_no];
         // if the line is full, clear it
-        if (row == 1023){
+        if (row == 1023 & !block_falling){
             this->board[row_no] = 0;
             this->score += 100;
             updated = true;
